@@ -1,0 +1,1893 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<!-- ======================== SEO / 页面信息（请替换成你自己的） ======================== -->
+<title>张金銮 · 个人主页 | 深圳大学 计算机与软件学院 硕士研究生</title>
+<meta name="description" content="张金銮的个人主页：深圳大学计算机与软件学院未来媒体技术与计算研究所工学硕士研究生，研究方向为多模态大模型与多模态 Agent，当前在做学术论文到学术海报的自动生成。这里记录我的个人简介、技能方向、项目作品、获奖经历与联系方式。" />
+<meta name="author" content="张金銮" />
+
+<!-- favicon 占位：用内联 SVG 生成，不依赖外部图片。替换成自己的图标时改这段 href 即可 -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%234F7CFF'/%3E%3Ctext x='32' y='45' font-size='36' font-family='sans-serif' font-weight='700' text-anchor='middle' fill='%23FFFFFF'%3E张%3C/text%3E%3C/svg%3E" />
+
+<style>
+/* =====================================================================
+   1. 设计变量（想改配色 / 圆角 / 阴影，只改这里就够了）
+   ===================================================================== */
+:root {
+  /* 颜色 */
+  --color-bg:          #F8FAFC;  /* 页面浅色背景 */
+  --color-surface:     #FFFFFF;  /* 卡片白 */
+  --color-primary:     #4F7CFF;  /* 主色 */
+  --color-primary-dark:#3B63E0;  /* 主色 hover */
+  --color-primary-soft:#EEF3FF;  /* 主色的极浅底，用于标签 / hover 底 */
+  --color-text:        #111827;  /* 正文 */
+  --color-muted:       #6B7280;  /* 次要文字 */
+  --color-border:      #E5E7EB;  /* 边框 */
+  --color-danger:      #D14343;  /* 错误提示（表单校验用） */
+  --color-success:     #1F7A4D;  /* 成功提示 */
+
+  /* 圆角 */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+
+  /* 阴影：整体非常克制，保持干净 */
+  --shadow-sm: 0 1px 2px rgba(17, 24, 39, .04);
+  --shadow-md: 0 4px 16px rgba(17, 24, 39, .06);
+  --shadow-lg: 0 10px 30px rgba(17, 24, 39, .08);
+
+  /* 布局 */
+  --wrap: 1120px;          /* 内容最大宽度 */
+  --header-h: 64px;        /* 导航栏高度，JS 里计算滚动偏移会用到 */
+  --section-gap: 96px;     /* 区块之间的垂直间距 */
+}
+
+/* =====================================================================
+   2. 基础重置
+   ===================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;          /* 锚点平滑滚动（会由媒体查询在“减少动画”时关闭） */
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;               /* 兜底：避免手机端出现横向滚动 */
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+               "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.75;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, p, ul, ol, figure { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
+img, svg { max-width: 100%; display: block; }
+a { color: var(--color-primary); text-decoration: none; }
+a:hover { color: var(--color-primary-dark); }
+
+/* 统一的键盘焦点样式：所有可交互元素都看得见焦点 */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+[tabindex="-1"]:focus { outline: none; }
+
+/* 跳到主内容（键盘用户按 Tab 第一下会出现） */
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -60px;
+  z-index: 100;
+  background: var(--color-primary);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  transition: top .2s ease;
+}
+.skip-link:focus { top: 12px; color: #fff; }
+
+/* =====================================================================
+   3. 通用组件
+   ===================================================================== */
+.wrap {
+  width: 100%;
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* 区块：统一垂直节奏 + 锚点定位偏移（避免被吸顶导航盖住标题） */
+.section {
+  padding: var(--section-gap) 0;
+  scroll-margin-top: calc(var(--header-h) + 12px);
+}
+.section--alt { background: var(--color-surface); }
+
+/* 区块标题：小标签 + 大标题 + 一句说明 */
+.section-head { max-width: 640px; margin-bottom: 40px; }
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 14px;
+}
+.eyebrow::before {
+  content: "";
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+.section-title {
+  font-size: clamp(24px, 3.4vw, 32px);
+  line-height: 1.3;
+  letter-spacing: -.01em;
+  font-weight: 700;
+}
+.section-desc { margin-top: 12px; color: var(--color-muted); }
+
+/* 按钮 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 22px;
+  font-size: 15px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color .2s ease, color .2s ease,
+              border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+.btn-primary {
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+}
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+.btn-ghost {
+  background: var(--color-surface);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+.btn-ghost:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+.btn:active { transform: translateY(0); }
+
+/* 标签（技能 / 关键词） */
+.tag {
+  display: inline-block;
+  font-size: 13px;
+  line-height: 1;
+  padding: 8px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-soft);
+  color: var(--color-primary-dark);
+  border: 1px solid transparent;
+}
+.tag--plain {
+  background: var(--color-bg);
+  color: var(--color-muted);
+  border-color: var(--color-border);
+}
+
+/* 卡片 */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow .25s ease, transform .25s ease, border-color .25s ease;
+}
+
+/* =====================================================================
+   4. 顶部导航（吸顶）
+   ===================================================================== */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(248, 250, 252, .88);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--color-border);
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--header-h);
+}
+
+/* 左侧品牌 */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-text);
+  font-weight: 700;
+}
+.brand:hover { color: var(--color-text); }
+.brand-mark {
+  width: 34px; height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+}
+.brand-text { font-size: 15px; letter-spacing: .02em; }
+
+/* 右侧导航 */
+.nav-menu { display: flex; align-items: center; gap: 4px; }
+.nav-link {
+  display: block;
+  padding: 8px 14px;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--color-muted);
+  border-radius: var(--radius-pill);
+  transition: color .2s ease, background-color .2s ease;
+  white-space: nowrap;
+}
+.nav-link:hover { color: var(--color-text); background: var(--color-primary-soft); }
+.nav-link.is-active { color: var(--color-primary); background: var(--color-primary-soft); font-weight: 600; }
+
+/* 汉堡按钮：桌面端隐藏 */
+.nav-toggle {
+  display: none;
+  width: 42px; height: 42px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+.nav-toggle-bar {
+  display: block;
+  width: 18px; height: 2px;
+  border-radius: 2px;
+  background: var(--color-text);
+  transition: transform .22s ease, opacity .22s ease;
+}
+/* 展开时变成叉号 */
+.nav-toggle.is-open .nav-toggle-bar:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.nav-toggle.is-open .nav-toggle-bar:nth-child(2) { opacity: 0; }
+.nav-toggle.is-open .nav-toggle-bar:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+/* =====================================================================
+   5. Hero 首页
+   ===================================================================== */
+.hero { padding: 76px 0 var(--section-gap); }
+.hero-inner {
+  display: grid;
+  grid-template-columns: 1.15fr .85fr;
+  align-items: center;
+  gap: 56px;
+}
+.hero-title {
+  font-size: clamp(30px, 5vw, 48px);
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  margin-bottom: 16px;
+}
+.hero-title .accent { color: var(--color-primary); }
+.hero-sub {
+  font-size: clamp(16px, 2vw, 18px);
+  color: var(--color-muted);
+  max-width: 30em;
+}
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.hero-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 28px;
+}
+.hero-art { display: grid; place-items: center; }
+
+/* 头像照片
+   照片以 base64 data URI 直接内联在 HTML 里，页面因此仍然只有一个文件、
+   不依赖任何外部图片，复制到任何地方都不会出现裂图。
+   想换照片：把下面 <img> 的 src 换成新图片的路径（或新图片的 data URI）即可。 */
+.avatar-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 1 / 1;
+}
+.avatar-ring {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--color-primary-soft);
+  border: 7px solid var(--color-surface);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, .14), 0 0 0 1px var(--color-border);
+}
+.avatar-photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 24%;
+}
+
+/* 头像周围的装饰圆点（对应原来 SVG 里的三个点） */
+.avatar-dot {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--color-primary);
+  pointer-events: none;
+}
+.avatar-dot--1 { width: 18px; height: 18px; top: 16px;  right: 0;     opacity: .26; }
+.avatar-dot--2 { width: 13px; height: 13px; left: -10px; bottom: 104px; opacity: .22; }
+.avatar-dot--3 { width: 11px; height: 11px; right: 20px; bottom: -4px; opacity: .34; }
+
+/* =====================================================================
+   6. 关于我
+   ===================================================================== */
+.about-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+  align-items: start;
+}
+.about-text p + p { margin-top: 16px; }
+.about-text p { color: var(--color-muted); }
+.about-text strong { color: var(--color-text); font-weight: 600; }
+
+.about-panel { padding: 28px; }
+.about-panel h3 {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  margin-bottom: 14px;
+}
+.about-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.about-list { margin-top: 24px; padding-top: 24px; border-top: 1px dashed var(--color-border); }
+.about-list li {
+  display: flex;
+  gap: 10px;
+  font-size: 14.5px;
+  color: var(--color-muted);
+}
+.about-list li + li { margin-top: 10px; }
+.about-list .dot {
+  flex: none;
+  width: 7px; height: 7px;
+  margin-top: 9px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  opacity: .7;
+}
+
+/* =====================================================================
+   7. 就读经历（时间轴）
+   ===================================================================== */
+.edu-timeline {
+  position: relative;
+  display: grid;
+  gap: 20px;
+  padding-left: 32px;
+  list-style: none;
+}
+/* 左侧竖线 */
+.edu-timeline::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 18px;
+  bottom: 18px;
+  width: 2px;
+  background: var(--color-border);
+  border-radius: 2px;
+}
+.edu-item { position: relative; padding: 24px 26px; }
+/* 时间轴节点圆点 */
+.edu-item::before {
+  content: '';
+  position: absolute;
+  left: -32px;
+  top: 30px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  border: 3px solid var(--color-primary);
+}
+.edu-top {
+  display: flex;
+  align-items: center;
+  gap: 8px 12px;
+  flex-wrap: wrap;
+  margin-bottom: 7px;
+}
+.edu-school { font-size: 18.5px; font-weight: 700; }
+.edu-badge {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  padding: 2px 9px;
+  border-radius: var(--radius-pill);
+}
+.edu-period {
+  margin-left: auto;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-primary);
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+.edu-major {
+  font-size: 14.5px;
+  color: var(--color-muted);
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px dashed var(--color-border);
+}
+.edu-points { display: grid; gap: 10px; }
+.edu-points li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 14.5px;
+  line-height: 1.75;
+  color: var(--color-muted);
+}
+.edu-points li::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 10px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  opacity: .5;
+}
+.edu-points li strong { color: var(--color-text); font-weight: 600; }
+.edu-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+
+/* =====================================================================
+   8. 技能 / 兴趣 / 学习方向
+   ===================================================================== */
+.skill-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.skill-card { padding: 26px; }
+.skill-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: #D8E2FF;
+}
+.skill-icon {
+  width: 42px; height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  margin-bottom: 16px;
+}
+.skill-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.skill-card p { font-size: 14.5px; color: var(--color-muted); margin-bottom: 18px; }
+.skill-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* 主研究方向卡：整行通栏，左侧文案 + 右侧技术栈 */
+.skill-card--wide {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 12px 36px;
+  flex-wrap: wrap;
+}
+.skill-card--wide .skill-head { flex: 1 1 270px; min-width: 0; }
+.skill-card--wide .skill-head p { margin-bottom: 0; }
+.skill-card--wide .skill-tags { flex: 2 1 430px; }
+
+/* 研究方向：单独一条，和技能卡区分开 */
+.research-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  padding: 18px 22px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.research-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14.5px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.research-icon {
+  width: 30px; height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+.research-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* =====================================================================
+   9. 作品展示
+   ===================================================================== */
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.work-card { display: flex; flex-direction: column; overflow: hidden; }
+.work-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: #D8E2FF; }
+.work-thumb {
+  aspect-ratio: 16 / 10;
+  background: var(--color-primary-soft);
+  border-bottom: 1px solid var(--color-border);
+}
+.work-thumb svg { width: 100%; height: 100%; }
+.work-body { padding: 22px; display: flex; flex-direction: column; flex: 1; }
+.work-meta {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+.work-body h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.work-body p { font-size: 14.5px; color: var(--color-muted); }
+.work-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.work-link {
+  margin-top: auto;
+  padding-top: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14.5px;
+  font-weight: 600;
+}
+.work-link svg { width: 15px; height: 15px; transition: transform .2s ease; }
+.work-link:hover svg { transform: translateX(3px); }
+
+/* 项目要点 */
+.work-points { margin-top: 14px; }
+.work-points li {
+  position: relative;
+  padding-left: 14px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--color-muted);
+}
+.work-points li + li { margin-top: 6px; }
+.work-points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  opacity: .55;
+}
+
+/* 项目对应的成果（软著 / 获奖） */
+.work-award {
+  margin-top: 14px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-soft);
+  color: var(--color-primary-dark);
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+/* 卡片内出现的行内代码 */
+.work-body code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  color: var(--color-primary-dark);
+  word-break: break-all;
+}
+
+/* =====================================================================
+   10. 获奖与证书
+   ===================================================================== */
+.award-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+/* 每一类是一张卡片，内部用列表承载具体条目 */
+.award-col { padding: 20px 20px 18px; }
+.award-col-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid var(--color-border);
+}
+.award-col-icon {
+  flex: none;
+  width: 32px; height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+.award-col-head h3 { font-size: 15px; font-weight: 700; }
+/* 证书类用中性色，和获奖区分开 */
+.award-col--cert .award-col-icon {
+  background: var(--color-bg);
+  color: var(--color-muted);
+  border: 1px solid var(--color-border);
+}
+
+.award-list { margin-top: 4px; }
+.award-list li {
+  position: relative;
+  padding: 11px 0 11px 15px;
+  border-bottom: 1px solid var(--color-border);
+}
+.award-list li:last-child { border-bottom: 0; padding-bottom: 2px; }
+/* 左侧小圆点，标出每个条目的起点 */
+.award-list li::before {
+  content: "";
+  position: absolute;
+  left: 1px; top: 18px;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  opacity: .5;
+}
+.award-name {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.award-meta {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+/* =====================================================================
+   11. 联系方式
+   ===================================================================== */
+.contact-inner {
+  display: grid;
+  grid-template-columns: .9fr 1.1fr;
+  gap: 56px;
+  align-items: start;
+}
+/* 左侧联系方式卡（目前只放邮箱） */
+.contact-card { padding: 30px 28px; }
+.contact-ico {
+  flex: none;
+  width: 46px; height: 46px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  margin-bottom: 18px;
+}
+.contact-card-label {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  color: var(--color-muted);
+  margin-bottom: 6px;
+}
+.contact-mail {
+  display: inline-block;
+  font-size: clamp(17px, 2vw, 20px);
+  font-weight: 700;
+  letter-spacing: -.01em;
+  color: var(--color-text);
+  word-break: break-all;
+}
+.contact-mail:hover { color: var(--color-primary); }
+.contact-card-note {
+  margin-top: 12px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--color-muted);
+}
+.contact-card-note--muted {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--color-border);
+  font-size: 13px;
+}
+
+/* 表单 */
+.form-card { padding: 28px; }
+.form-row { margin-bottom: 18px; }
+.form-row label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+.form-row label .req { color: var(--color-danger); margin-left: 2px; }
+.input, .textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: 15px;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+.textarea { min-height: 120px; resize: vertical; line-height: 1.7; }
+.input::placeholder, .textarea::placeholder { color: #9CA3AF; }
+.input:hover, .textarea:hover { border-color: #D1D5DB; }
+.input:focus, .textarea:focus {
+  outline: none;
+  background: var(--color-surface);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(79, 124, 255, .16);
+}
+.input[aria-invalid="true"], .textarea[aria-invalid="true"] {
+  border-color: var(--color-danger);
+  background: #FFF7F7;
+}
+.input[aria-invalid="true"]:focus, .textarea[aria-invalid="true"]:focus {
+  box-shadow: 0 0 0 3px rgba(209, 67, 67, .14);
+}
+.field-error {
+  display: none;
+  font-size: 13px;
+  color: var(--color-danger);
+  margin-top: 6px;
+}
+.field-error.is-show { display: block; }
+.form-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 22px; }
+.form-hint { font-size: 13px; color: var(--color-muted); }
+.form-status { font-size: 14px; margin-top: 16px; }
+.form-status.is-ok { color: var(--color-success); }
+.form-status.is-error { color: var(--color-danger); }
+
+/* =====================================================================
+   12. 页脚 & 回到顶部
+   ===================================================================== */
+.site-footer {
+  border-top: 1px solid var(--color-border);
+  background: var(--color-surface);
+  padding: 32px 0;
+}
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+.footer-links { display: flex; gap: 18px; }
+.footer-links a { color: var(--color-muted); }
+.footer-links a:hover { color: var(--color-primary); }
+
+.to-top {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 60;
+  width: 46px; height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;      /* 隐藏时同时移出 Tab 顺序 */
+  transform: translateY(10px);
+  transition: opacity .25s ease, transform .25s ease, visibility 0s linear .25s,
+              color .2s ease, border-color .2s ease;
+}
+.to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity .25s ease, transform .25s ease, visibility 0s linear 0s,
+              color .2s ease, border-color .2s ease;
+}
+.to-top:hover { color: var(--color-primary); border-color: var(--color-primary); }
+
+/* =====================================================================
+   13. 进入视口淡入上移（JS 负责加 .is-visible）
+   ===================================================================== */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .28s ease-out, transform .28s ease-out;
+  will-change: opacity, transform;
+}
+.reveal.is-visible { opacity: 1; transform: none; }
+
+/* =====================================================================
+   14. 响应式
+   ===================================================================== */
+
+/* 平板 */
+@media (max-width: 900px) {
+  :root { --section-gap: 76px; }
+  .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+  .hero-art { order: -1; }
+  .avatar-wrap { max-width: 240px; }
+  .about-inner,
+  .contact-inner { grid-template-columns: 1fr; gap: 36px; }
+  .skill-grid,
+  .work-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* 平板：获奖区四栏收成两栏 */
+@media (max-width: 1100px) {
+  .award-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* 手机（375px 已经覆盖） */
+@media (max-width: 768px) {
+  :root { --header-h: 60px; --section-gap: 64px; }
+  .wrap { padding: 0 16px; }
+
+  /* 导航折叠为汉堡菜单 */
+  .nav-toggle { display: flex; }
+  .nav-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    padding: 10px 16px 16px;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    /* visibility 用 0s 延迟切换：展开时立刻可见，收起时等淡出动画结束再隐藏。
+       这样不依赖离散属性的过渡插值，交互在任何环境下都稳定。 */
+    transition: opacity .22s ease, transform .22s ease, visibility 0s linear .22s;
+  }
+  .nav-menu.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition: opacity .22s ease, transform .22s ease, visibility 0s linear 0s;
+  }
+  .nav-link { padding: 12px 14px; font-size: 15.5px; }
+
+  .hero { padding-top: 48px; }
+  .hero-actions .btn { flex: 1 1 auto; }
+  .skill-grid, .work-grid, .award-grid { grid-template-columns: 1fr; }
+  .about-panel, .form-card { padding: 22px; }
+  /* 时间轴在窄屏收紧内缩，节点圆点跟着左移 */
+  .edu-timeline { padding-left: 24px; gap: 16px; }
+  .edu-item { padding: 20px; }
+  .edu-item::before { left: -24px; top: 26px; }
+  .edu-period { margin-left: 0; }
+  .contact-card { padding: 22px; }
+  .research-row { flex-direction: column; align-items: flex-start; gap: 12px; padding: 18px; }
+  .award-col { padding: 18px 16px 16px; }
+  .form-actions { flex-direction: column; align-items: stretch; }
+  .form-actions .btn { width: 100%; }
+  .to-top { right: 16px; bottom: 16px; }
+  .footer-inner { justify-content: center; text-align: center; }
+}
+
+/* 超窄屏兜底（320px 也不横向滚动） */
+@media (max-width: 360px) {
+  .brand-text { display: none; }
+  .hero-title { font-size: 26px; }
+}
+
+/* =====================================================================
+   15. 尊重系统「减少动态效果」设置
+   ===================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+}
+</style>
+</head>
+
+<body>
+<!-- 键盘无障碍：第一个 Tab 就能跳到主内容 -->
+<a class="skip-link" href="#hero">跳到主要内容</a>
+
+<!-- ========================= 顶部导航（吸顶） ========================= -->
+<header class="site-header" id="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="#hero" aria-label="回到页面顶部">
+      <span class="brand-mark" aria-hidden="true">张</span>
+      <span class="brand-text">张金銮</span>
+    </a>
+
+    <!-- 移动端汉堡按钮 -->
+    <button
+      class="nav-toggle"
+      id="nav-toggle"
+      type="button"
+      aria-label="打开导航菜单"
+      aria-expanded="false"
+      aria-controls="nav-menu">
+      <span class="nav-toggle-bar" aria-hidden="true"></span>
+      <span class="nav-toggle-bar" aria-hidden="true"></span>
+      <span class="nav-toggle-bar" aria-hidden="true"></span>
+    </button>
+
+    <nav aria-label="主导航">
+      <ul class="nav-menu" id="nav-menu">
+        <li><a class="nav-link" href="#hero">首页</a></li>
+        <li><a class="nav-link" href="#about">关于我</a></li>
+        <li><a class="nav-link" href="#education">就读经历</a></li>
+        <li><a class="nav-link" href="#skills">技能</a></li>
+        <li><a class="nav-link" href="#works">项目</a></li>
+        <li><a class="nav-link" href="#awards">获奖</a></li>
+        <li><a class="nav-link" href="#contact">联系方式</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ========================= 1. Hero 首页 ========================= -->
+  <section class="hero" id="hero" aria-labelledby="hero-title">
+    <div class="wrap hero-inner">
+
+      <div class="hero-copy reveal">
+        <p class="eyebrow">深圳大学 · 计算机与软件学院 · 未来媒体技术与计算研究所 · 研究生在读</p>
+
+        <h1 class="hero-title" id="hero-title">
+          你好，我是 <span class="accent">张金銮</span>
+        </h1>
+
+        <p class="hero-sub">
+          我的研究方向是<strong>多模态大模型</strong>与<strong>多模态 Agent</strong>——
+          关心模型如何「看懂」视觉内容，又如何把这份理解变成可执行的代码与动作。
+        </p>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#works">
+            查看作品
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 12h14M13 6l6 6-6 6"/>
+            </svg>
+          </a>
+          <a class="btn btn-ghost" href="#contact">联系我</a>
+        </div>
+
+        <ul class="hero-facts" aria-label="我的关键词">
+          <li><span class="tag">多模态大模型</span></li>
+          <li><span class="tag">多模态 Agent</span></li>
+          <li><span class="tag tag--plain">SFT / RL</span></li>
+          <li><span class="tag tag--plain">全栈开发</span></li>
+        </ul>
+      </div>
+
+      <!-- 头像照片（base64 内联，不依赖任何外部图片文件） -->
+      <div class="hero-art reveal">
+        <div class="avatar-wrap">
+          <div class="avatar-ring">
+            <img class="avatar-photo"
+                 src="./assets/avater.jpg"
+                 width="520" height="520"
+                 alt="张金銮的个人照片" />
+          </div>
+          <!-- 装饰圆点 -->
+          <span class="avatar-dot avatar-dot--1" aria-hidden="true"></span>
+          <span class="avatar-dot avatar-dot--2" aria-hidden="true"></span>
+          <span class="avatar-dot avatar-dot--3" aria-hidden="true"></span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========================= 2. 关于我 ========================= -->
+  <section class="section" id="about" aria-labelledby="about-title">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">关于我</p>
+        <h2 class="section-title" id="about-title">让模型先看懂，再让它把事做成</h2>
+      </div>
+
+      <div class="about-inner">
+        <div class="about-text reveal">
+          <p>
+            我是<strong>张金銮</strong>，深圳大学计算机与软件学院<strong>未来媒体技术与计算研究所</strong>的工学硕士研究生，
+            研究方向是<strong>多模态大模型与多模态 Agent</strong>。
+            本科就读于湖南工学院软件工程专业，GPA 3.94/5.0，专业排名第一，
+            拿过国家奖学金和国家励志奖学金。
+          </p>
+          <p>
+            本科阶段我把自己练成了一个能独立交付系统的人：从需求梳理、数据库设计，到后端接口、前端页面和部署，
+            完整做完过两个项目。这段经历真正留下的不是某个框架的熟练度，
+            而是「把想法拆成能一步步落地的动作」的习惯。
+          </p>
+          <p>
+            研究生阶段我把重心移到了多模态大模型与多模态 Agent 上：读论文、复现实验、动手改模型，
+            目前正在做的方向是让模型从视觉输入直接生成可运行的代码。
+            我希望自己既有读懂方法的能力，也有把方法跑通、跑出结果的工程手感——
+            一篇论文真正的门槛，往往就在于实验能不能被复现出来。
+          </p>
+        </div>
+
+        <aside class="card about-panel reveal" aria-label="个人关键词与近况">
+          <h3>关键词</h3>
+          <ul class="about-tags">
+            <li><span class="tag">多模态大模型</span></li>
+            <li><span class="tag">多模态 Agent</span></li>
+            <li><span class="tag">SFT / RL</span></li>
+            <li><span class="tag tag--plain">全栈开发</span></li>
+            <li><span class="tag tag--plain">Spring</span></li>
+            <li><span class="tag tag--plain">Vue</span></li>
+          </ul>
+
+          <ul class="about-list">
+            <li><span class="dot" aria-hidden="true"></span><span>深圳大学 计算机与软件学院 · 工学硕士在读</span></li>
+            <li><span class="dot" aria-hidden="true"></span><span>本科软件工程，GPA 3.94/5.0（专业第 1）</span></li>
+            <li><span class="dot" aria-hidden="true"></span><span>已获国家计算机软件著作权一项（第一作者）</span></li>
+            <li><span class="dot" aria-hidden="true"></span><span>通过软考中级（软件设计师）、大学英语四级</span></li>
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= 3. 就读经历 ========================= -->
+  <section class="section section--alt" id="education" aria-labelledby="education-title">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">就读经历</p>
+        <h2 class="section-title" id="education-title">从湖南工学院到深圳大学</h2>
+        <p class="section-desc">
+          本科打基础，研究生转向多模态大模型与智能体方向——两个阶段各做了一件事，也各留下了一些东西。
+        </p>
+      </div>
+
+      <ol class="edu-timeline">
+
+        <!-- 深圳大学（在读） -->
+        <li class="card edu-item reveal">
+          <div class="edu-top">
+            <h3 class="edu-school">深圳大学</h3>
+            <span class="edu-badge">在读</span>
+            <span class="edu-period">2026.09 — 至今</span>
+          </div>
+          <p class="edu-major">计算机与软件学院 · 未来媒体技术与计算研究所 · 计算机技术（工学硕士）</p>
+
+          <ul class="edu-points">
+            <li>研究方向为<strong>多模态大模型</strong>与<strong>多模态 Agent</strong>，关注模型的指令微调、强化学习对齐与工具调用能力。</li>
+            <li>考研初试总分 <strong>347</strong>，其中 408 计算机学科专业基础 109 分；初复试总分 <strong>602</strong>，复试机试 90 分。</li>
+            <li>研究生阶段的重心是多模态大模型与智能体：读论文、复现实验、动手改模型，把本科积累的工程手感接到研究上。</li>
+          </ul>
+
+          <ul class="edu-tags">
+            <li><span class="tag">多模态大模型</span></li>
+            <li><span class="tag">多模态 Agent</span></li>
+            <li><span class="tag tag--plain">SFT / RL</span></li>
+            <li><span class="tag tag--plain">未来媒体技术与计算研究所</span></li>
+          </ul>
+        </li>
+
+        <!-- 湖南工学院（本科） -->
+        <li class="card edu-item reveal">
+          <div class="edu-top">
+            <h3 class="edu-school">湖南工学院</h3>
+            <span class="edu-period">2022.09 — 2026.06</span>
+          </div>
+          <p class="edu-major">软件工程（本科）· GPA 3.94 / 5.0 · 专业排名第 1</p>
+
+          <ul class="edu-points">
+            <li>四年专业排名第一，获得<strong>国家奖学金</strong>、<strong>国家励志奖学金</strong>与校一等奖学金。</li>
+            <li>主修课程成绩：Java 程序设计 99、线性代数 97、高等数学（下）96、操作系统 95、离散数学 94、软件设计与体系结构 94、算法设计与分析 94。</li>
+            <li>独立完成「慧厂管家」一体化工厂管理系统与毕业设计「智赛方舟」高校智能竞赛平台，前者取得<strong>国家计算机软件著作权一项（第一作者）</strong>。</li>
+            <li>通过<strong>软考中级（软件设计师）</strong>与大学英语四级。</li>
+          </ul>
+
+          <ul class="edu-tags">
+            <li><span class="tag">软件工程</span></li>
+            <li><span class="tag">GPA 3.94 / 5.0</span></li>
+            <li><span class="tag tag--plain">专业第 1</span></li>
+            <li><span class="tag tag--plain">软考中级</span></li>
+          </ul>
+        </li>
+
+      </ol>
+    </div>
+  </section>
+
+  <!-- ========================= 4. 技能 / 兴趣 / 学习方向 ========================= -->
+  <section class="section" id="skills" aria-labelledby="skills-title">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">技能与方向</p>
+        <h2 class="section-title" id="skills-title">我熟悉的技术栈，和正在深入的方向</h2>
+        <p class="section-desc">
+          下面都是我实际在项目里用过、能讲清楚的技术——不写进度条，因为熟练度不该被一个百分比概括。
+        </p>
+      </div>
+
+      <div class="skill-grid">
+
+        <!-- 大模型与智能体（主研究方向，通栏展示） -->
+        <article class="card skill-card skill-card--wide reveal">
+          <div class="skill-head">
+            <div class="skill-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="2.6"/>
+                <circle cx="4.5" cy="6" r="2"/><circle cx="19.5" cy="6" r="2"/>
+                <circle cx="4.5" cy="18" r="2"/><circle cx="19.5" cy="18" r="2"/>
+                <path d="M6.3 7.2l3.6 3M17.7 7.2l-3.6 3M6.3 16.8l3.6-3M17.7 16.8l-3.6-3"/>
+              </svg>
+            </div>
+            <h3>大模型与智能体</h3>
+            <p>围绕多模态大模型的训练与落地：从指令微调、强化学习对齐，到能自己调用工具的智能体，以及「学术论文 → 学术海报」的自动排版链路。</p>
+          </div>
+          <ul class="skill-tags">
+            <li><span class="tag">SFT 指令微调</span></li>
+            <li><span class="tag">RL（PPO / DPO）</span></li>
+            <li><span class="tag">多模态 Agent</span></li>
+            <li><span class="tag">RAG</span></li>
+            <li><span class="tag tag--plain">PyTorch</span></li>
+            <li><span class="tag tag--plain">Transformers</span></li>
+            <li><span class="tag tag--plain">LoRA / PEFT</span></li>
+            <li><span class="tag tag--plain">LangChain</span></li>
+            <li><span class="tag tag--plain">ReAct / Tool Use</span></li>
+            <li><span class="tag tag--plain">向量数据库</span></li>
+          </ul>
+        </article>
+
+        <!-- 后端开发 -->
+        <article class="card skill-card reveal">
+          <div class="skill-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>
+            </svg>
+          </div>
+          <h3>后端开发</h3>
+          <p>面向业务的后端服务开发，从接口设计到数据落地。</p>
+          <ul class="skill-tags">
+            <li><span class="tag">Java</span></li>
+            <li><span class="tag">SpringBoot</span></li>
+            <li><span class="tag">MyBatis</span></li>
+            <li><span class="tag tag--plain">MySQL</span></li>
+            <li><span class="tag tag--plain">Redis</span></li>
+            <li><span class="tag tag--plain">WebSocket</span></li>
+          </ul>
+        </article>
+
+        <!-- 前端与数据可视化 -->
+        <article class="card skill-card reveal">
+          <div class="skill-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 3v18h18"/><path d="M7 15v3M12 10v8M17 6v12"/>
+            </svg>
+          </div>
+          <h3>前端与可视化</h3>
+          <p>管理端页面开发，以及把数据讲清楚的图表设计。</p>
+          <ul class="skill-tags">
+            <li><span class="tag">Vue</span></li>
+            <li><span class="tag">ECharts</span></li>
+            <li><span class="tag">HTML / CSS</span></li>
+            <li><span class="tag tag--plain">JavaScript</span></li>
+          </ul>
+        </article>
+
+        <!-- 工程工具 -->
+        <article class="card skill-card reveal">
+          <div class="skill-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14.7 6.3a4 4 0 0 0 5 5l-9.4 9.4a2.1 2.1 0 0 1-3-3z"/><path d="M14.7 6.3L17 4l3 3-2.3 2.3"/>
+            </svg>
+          </div>
+          <h3>工程与工具</h3>
+          <p>让项目能稳定跑起来的那些配套东西。</p>
+          <ul class="skill-tags">
+            <li><span class="tag">Maven</span></li>
+            <li><span class="tag">Git</span></li>
+            <li><span class="tag">Quartz / SpringTask</span></li>
+            <li><span class="tag tag--plain">阿里云 OSS</span></li>
+          </ul>
+        </article>
+
+      </div>
+
+      <!-- 研究方向单独一行展示，和技能区分开 -->
+      <div class="research-row reveal">
+        <div class="research-label">
+          <span class="research-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>
+            </svg>
+          </span>
+          <span>在读研究方向</span>
+        </div>
+        <ul class="research-tags">
+          <li><span class="tag">多模态大模型</span></li>
+          <li><span class="tag">多模态 Agent</span></li>
+          <li><span class="tag tag--plain">SFT / 指令微调</span></li>
+          <li><span class="tag tag--plain">强化学习 / RL</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= 5. 作品展示 ========================= -->
+  <section class="section section--alt" id="works" aria-labelledby="works-title">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">项目经历</p>
+        <h2 class="section-title" id="works-title">做过的东西，比说过的更有说服力</h2>
+        <p class="section-desc">
+          按时间倒序排列：第一张是我研究生阶段正在推进的方向，后两张是本科时完整交付的两个工程系统。
+        </p>
+      </div>
+
+      <div class="work-grid">
+
+        <!-- 项目 1：研究生阶段当前方向，排在最前 -->
+        <article class="card work-card reveal">
+          <div class="work-thumb">
+            <svg viewBox="0 0 320 200" role="img" aria-label="项目示意图：学术论文经多模态模型转化为内容精炼、布局规整的学术海报">
+              <rect width="320" height="200" fill="#EEF3FF"/>
+              <!-- 左：输入的学术论文 -->
+              <rect x="22" y="30" width="118" height="140" rx="8" fill="#FFFFFF" stroke="#D8E2FF"/>
+              <rect x="34" y="41" width="72" height="7" rx="3.5" fill="#4F7CFF"/>
+              <rect x="34" y="52" width="46" height="4" rx="2" fill="#D8E2FF"/>
+              <!-- 双栏正文 -->
+              <rect x="34" y="66" width="42" height="4" rx="2" fill="#E5EAF5"/>
+              <rect x="34" y="75" width="42" height="4" rx="2" fill="#E5EAF5"/>
+              <rect x="34" y="84" width="34" height="4" rx="2" fill="#E5EAF5"/>
+              <rect x="34" y="93" width="42" height="4" rx="2" fill="#E5EAF5"/>
+              <rect x="34" y="102" width="28" height="4" rx="2" fill="#E5EAF5"/>
+              <rect x="80" y="66" width="42" height="4" rx="2" fill="#E5EAF5"/>
+              <rect x="80" y="75" width="42" height="4" rx="2" fill="#E5EAF5"/>
+              <rect x="80" y="84" width="30" height="4" rx="2" fill="#E5EAF5"/>
+              <rect x="80" y="93" width="42" height="4" rx="2" fill="#E5EAF5"/>
+              <rect x="80" y="102" width="38" height="4" rx="2" fill="#E5EAF5"/>
+              <!-- 论文中的表格 -->
+              <rect x="34" y="118" width="88" height="38" rx="3" fill="none" stroke="#D8E2FF"/>
+              <path d="M34 130h88M34 142h88M63 118v38M92 118v38" stroke="#D8E2FF"/>
+              <!-- 中：转换箭头 -->
+              <path d="M148 100h28" stroke="#9DB4E8" stroke-width="3" stroke-linecap="round"/>
+              <path d="M169 93l8 7-8 7" fill="none" stroke="#9DB4E8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="162" y="84" font-size="10" font-family="sans-serif" font-weight="600" fill="#9DB4E8" text-anchor="middle">MLLM</text>
+              <!-- 右：生成的学术海报 -->
+              <rect x="186" y="30" width="112" height="140" rx="8" fill="#FFFFFF" stroke="#D8E2FF"/>
+              <path d="M186 38a8 8 0 0 1 8-8h96a8 8 0 0 1 8 8v18H186z" fill="#4F7CFF"/>
+              <rect x="197" y="40" width="46" height="6" rx="3" fill="#FFFFFF" opacity=".92"/>
+              <rect x="197" y="50" width="30" height="4" rx="2" fill="#FFFFFF" opacity=".6"/>
+              <!-- 主图 -->
+              <rect x="197" y="68" width="90" height="26" rx="4" fill="#EEF3FF" stroke="#D8E2FF"/>
+              <circle cx="212" cy="78" r="3" fill="#C7D7FF"/>
+              <path d="M202 90l10-8 8 6 7-5 9 7z" fill="#C7D7FF"/>
+              <!-- 两栏要点 -->
+              <rect x="197" y="102" width="42" height="4" rx="2" fill="#9DB4E8"/>
+              <rect x="197" y="112" width="42" height="4" rx="2" fill="#E5EAF5"/>
+              <rect x="197" y="122" width="34" height="4" rx="2" fill="#E5EAF5"/>
+              <rect x="197" y="132" width="42" height="4" rx="2" fill="#E5EAF5"/>
+              <rect x="245" y="102" width="42" height="4" rx="2" fill="#9DB4E8"/>
+              <rect x="245" y="112" width="42" height="4" rx="2" fill="#E5EAF5"/>
+              <rect x="245" y="122" width="28" height="4" rx="2" fill="#E5EAF5"/>
+              <rect x="245" y="132" width="42" height="4" rx="2" fill="#E5EAF5"/>
+              <!-- 底部结果图 -->
+              <rect x="197" y="144" width="90" height="16" rx="4" fill="#F8FAFC" stroke="#E5EAF5"/>
+              <rect x="204" y="150" width="10" height="5" rx="2" fill="#C7D7FF"/>
+              <rect x="218" y="150" width="10" height="5" rx="2" fill="#9DB4E8"/>
+              <rect x="232" y="150" width="10" height="5" rx="2" fill="#4F7CFF"/>
+              <rect x="246" y="150" width="10" height="5" rx="2" fill="#C7D7FF"/>
+            </svg>
+          </div>
+          <div class="work-body">
+            <p class="work-meta">在研工作 · 2026.09 – 至今</p>
+            <h3>Paper2Poster · 论文转学术海报</h3>
+            <p>把学术论文一键转成<strong>内容精炼、布局完美</strong>的学术海报 —— 本质是<strong>长文档关键信息压缩</strong>叠加<strong>受约束的版面生成</strong>，而非原文搬运。</p>
+            <ul class="work-points">
+              <li>论文 PDF 解析 → 结构化中间表示 → 多模态大模型压缩，产出海报的最小信息集（标题、贡献、方法、结论）</li>
+              <li>版面建模为约束满足问题：预测分栏结构与元素层级，用模板先验 + 容量约束求解，杜绝元素重叠与溢出</li>
+              <li>LoRA / SFT 微调 → RL 结合 VLM 视觉回馈对齐；用论文–海报配对数据做自动评测与偏好对比</li>
+            </ul>
+            <ul class="work-tags">
+              <li><span class="tag">多模态大模型</span></li>
+              <li><span class="tag tag--plain">SFT / LoRA</span></li>
+              <li><span class="tag tag--plain">RLHF 对齐</span></li>
+              <li><span class="tag tag--plain">约束式版面生成</span></li>
+              <li><span class="tag tag--plain">VLM 自评</span></li>
+            </ul>
+            <p class="work-award">目标：内容做减法、版面做加法 —— 一页说清一篇论文</p>
+            <a class="work-link" href="#works" aria-label="查看项目：Paper2Poster 论文转学术海报（链接为占位）">
+              查看项目
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6"/>
+              </svg>
+            </a>
+          </div>
+        </article>
+
+        <!-- 项目 2 -->
+        <article class="card work-card reveal">
+          <div class="work-thumb">
+            <svg viewBox="0 0 320 200" role="img" aria-label="作品示意图：工厂管理系统的数据看板界面">
+              <rect width="320" height="200" fill="#EEF3FF"/>
+              <rect x="30" y="26" width="260" height="148" rx="10" fill="#FFFFFF" stroke="#D8E2FF"/>
+              <!-- 左侧菜单 -->
+              <path d="M40 26h44v148H40a10 10 0 0 1-10-10V36a10 10 0 0 1 10-10z" fill="#4F7CFF"/>
+              <rect x="44" y="46" width="26" height="6" rx="3" fill="#FFFFFF" opacity=".9"/>
+              <rect x="44" y="64" width="26" height="6" rx="3" fill="#FFFFFF" opacity=".5"/>
+              <rect x="44" y="82" width="26" height="6" rx="3" fill="#FFFFFF" opacity=".5"/>
+              <rect x="44" y="100" width="26" height="6" rx="3" fill="#FFFFFF" opacity=".5"/>
+              <!-- 顶部指标卡 -->
+              <rect x="98" y="44" width="54" height="34" rx="7" fill="#EEF3FF"/>
+              <rect x="160" y="44" width="54" height="34" rx="7" fill="#EEF3FF"/>
+              <rect x="222" y="44" width="54" height="34" rx="7" fill="#EEF3FF"/>
+              <rect x="108" y="54" width="22" height="6" rx="3" fill="#9DB4E8"/>
+              <rect x="170" y="54" width="22" height="6" rx="3" fill="#9DB4E8"/>
+              <rect x="232" y="54" width="22" height="6" rx="3" fill="#9DB4E8"/>
+              <rect x="108" y="66" width="34" height="5" rx="2.5" fill="#D8E2FF"/>
+              <rect x="170" y="66" width="34" height="5" rx="2.5" fill="#D8E2FF"/>
+              <rect x="232" y="66" width="34" height="5" rx="2.5" fill="#D8E2FF"/>
+              <!-- 统计图 -->
+              <rect x="98" y="92" width="178" height="66" rx="8" fill="#F8FAFC" stroke="#E5EAF5"/>
+              <rect x="112" y="126" width="18" height="24" rx="4" fill="#C7D7FF"/>
+              <rect x="140" y="112" width="18" height="38" rx="4" fill="#9DB4E8"/>
+              <rect x="168" y="102" width="18" height="48" rx="4" fill="#4F7CFF"/>
+              <rect x="196" y="118" width="18" height="32" rx="4" fill="#C7D7FF"/>
+              <rect x="224" y="106" width="18" height="44" rx="4" fill="#9DB4E8"/>
+              <path d="M108 146h160" stroke="#D8E2FF" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="work-body">
+            <p class="work-meta">工程项目 · 2025.01 – 2025.04</p>
+            <h3>慧厂管家</h3>
+            <p>基于 RuoYi 框架开发的中小型工厂一体化信息管理系统，集成订单、员工、奖惩、货物、仓库、数据统计等模块，实现业务自动联动与数据可视化。</p>
+            <ul class="work-points">
+              <li>基于 SpringBoot + Vue 参与核心模块的设计与开发，保障业务逻辑完整</li>
+              <li>基于 ECharts 开发数据统计模块，实现多维度数据可视化展示</li>
+              <li>基于 Quartz 开发自动化任务调度，完成工资自动结算等定时业务</li>
+            </ul>
+            <ul class="work-tags">
+              <li><span class="tag">SpringBoot</span></li>
+              <li><span class="tag tag--plain">Vue</span></li>
+              <li><span class="tag tag--plain">MySQL</span></li>
+              <li><span class="tag tag--plain">ECharts</span></li>
+              <li><span class="tag tag--plain">Quartz</span></li>
+            </ul>
+            <p class="work-award">国家计算机软件著作权（第一作者）· 中国大学生计算机设计大赛中南赛区二等奖</p>
+            <a class="work-link" href="#works" aria-label="查看项目：慧厂管家（链接为占位）">
+              查看项目
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6"/>
+              </svg>
+            </a>
+          </div>
+        </article>
+
+        <!-- 项目 3 -->
+        <article class="card work-card reveal">
+          <div class="work-thumb">
+            <svg viewBox="0 0 320 200" role="img" aria-label="作品示意图：高校竞赛平台的主界面与实时消息推送">
+              <rect width="320" height="200" fill="#EEF3FF"/>
+              <!-- 主面板 -->
+              <rect x="26" y="30" width="180" height="140" rx="10" fill="#FFFFFF" stroke="#D8E2FF"/>
+              <rect x="42" y="46" width="70" height="9" rx="4.5" fill="#C7D7FF"/>
+              <rect x="42" y="68" width="148" height="30" rx="7" fill="#EEF3FF"/>
+              <rect x="42" y="106" width="148" height="30" rx="7" fill="#EEF3FF"/>
+              <rect x="56" y="80" width="60" height="6" rx="3" fill="#9DB4E8"/>
+              <rect x="56" y="118" width="76" height="6" rx="3" fill="#9DB4E8"/>
+              <!-- 消息推送卡 -->
+              <rect x="216" y="52" width="78" height="52" rx="10" fill="#4F7CFF"/>
+              <rect x="228" y="68" width="42" height="6" rx="3" fill="#FFFFFF" opacity=".9"/>
+              <rect x="228" y="82" width="54" height="6" rx="3" fill="#FFFFFF" opacity=".6"/>
+              <!-- 消息气泡 -->
+              <rect x="216" y="116" width="78" height="34" rx="10" fill="#FFFFFF" stroke="#D8E2FF"/>
+              <circle cx="233" cy="133" r="7" fill="#C7D7FF"/>
+              <rect x="247" y="127" width="36" height="5" rx="2.5" fill="#E5EAF5"/>
+              <rect x="247" y="137" width="24" height="5" rx="2.5" fill="#E5EAF5"/>
+            </svg>
+          </div>
+          <div class="work-body">
+            <p class="work-meta">毕业设计 · 2026.01 – 2026.03</p>
+            <h3>智赛方舟</h3>
+            <p>基于 SpringBoot + Vue 的高校竞赛一体化管理平台，分教师、学生、获奖审核员三端，覆盖竞赛、项目、团队、新闻、消息、获奖审核全流程。</p>
+            <ul class="work-points">
+              <li>基于 WebSocket 开发实时通信服务，实现组队邀请、申请加入等消息的即时推送</li>
+              <li>引入 Redis 做热点数据缓存（竞赛列表、热门推荐），显著提升系统访问性能</li>
+              <li>基于 SpringTask 实现竞赛截止提醒、数据统计等定时业务</li>
+            </ul>
+            <ul class="work-tags">
+              <li><span class="tag">SpringBoot</span></li>
+              <li><span class="tag tag--plain">Vue</span></li>
+              <li><span class="tag tag--plain">WebSocket</span></li>
+              <li><span class="tag tag--plain">Redis</span></li>
+              <li><span class="tag tag--plain">MyBatis</span></li>
+            </ul>
+            <a class="work-link" href="#works" aria-label="查看项目：智赛方舟（链接为占位）">
+              查看项目
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6"/>
+              </svg>
+            </a>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= 6. 获奖与证书 ========================= -->
+  <section class="section" id="awards" aria-labelledby="awards-title">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">获奖与证书</p>
+        <h2 class="section-title" id="awards-title">一些阶段性的肯定</h2>
+        <p class="section-desc">按科研成果、奖学金、竞赛奖项、证书四类分开排列，每一类内部再按级别从高到低。</p>
+      </div>
+
+      <div class="award-grid">
+
+        <!-- 科研成果 -->
+        <div class="card award-col reveal" role="group" aria-labelledby="aw-research">
+          <div class="award-col-head">
+            <span class="award-col-icon" aria-hidden="true">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 3v5h5"/><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M9 13h6M9 17h4"/>
+              </svg>
+            </span>
+            <h3 id="aw-research">科研成果</h3>
+          </div>
+          <ul class="award-list">
+            <li>
+              <span class="award-name">国家计算机软件著作权</span>
+              <span class="award-meta">第一作者 · 2025</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 奖学金 -->
+        <div class="card award-col reveal" role="group" aria-labelledby="aw-scholarship">
+          <div class="award-col-head">
+            <span class="award-col-icon" aria-hidden="true">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="9" r="6"/><path d="M8.5 14.5L7 22l5-3 5 3-1.5-7.5"/>
+              </svg>
+            </span>
+            <h3 id="aw-scholarship">奖学金</h3>
+          </div>
+          <ul class="award-list">
+            <li><span class="award-name">国家奖学金</span><span class="award-meta">国家级 · 2025</span></li>
+            <li><span class="award-name">国家励志奖学金</span><span class="award-meta">国家级 · 2024</span></li>
+            <li><span class="award-name">湖南工学院一等奖学金</span><span class="award-meta">校级 · 2025</span></li>
+            <li><span class="award-name">湖南工学院二等奖学金</span><span class="award-meta">校级 · 2023、2024</span></li>
+          </ul>
+        </div>
+
+        <!-- 竞赛奖项 -->
+        <div class="card award-col reveal" role="group" aria-labelledby="aw-competition">
+          <div class="award-col-head">
+            <span class="award-col-icon" aria-hidden="true">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 4h10v4a5 5 0 0 1-10 0z"/><path d="M7 5H4v2a3 3 0 0 0 3 3"/><path d="M17 5h3v2a3 3 0 0 1-3 3"/><path d="M12 13v3"/><path d="M9 20h6"/>
+              </svg>
+            </span>
+            <h3 id="aw-competition">竞赛奖项</h3>
+          </div>
+          <ul class="award-list">
+            <li><span class="award-name">全国大学生数字媒体科技作品及创意竞赛</span><span class="award-meta">全国三等奖 · 2024</span></li>
+            <li><span class="award-name">中国大学生计算机设计大赛</span><span class="award-meta">中南赛区二等奖 · 2025</span></li>
+            <li><span class="award-name">全国大学生软件测试大赛</span><span class="award-meta">湖南省二等奖 · 2024</span></li>
+            <li><span class="award-name">蓝桥杯全国软件和信息技术专业人才大赛</span><span class="award-meta">湖南省三等奖 · 2025</span></li>
+          </ul>
+        </div>
+
+        <!-- 证书 -->
+        <div class="card award-col award-col--cert reveal" role="group" aria-labelledby="aw-cert">
+          <div class="award-col-head">
+            <span class="award-col-icon" aria-hidden="true">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 3h12v18l-6-4-6 4z"/><path d="M9 8h6"/>
+              </svg>
+            </span>
+            <h3 id="aw-cert">证书</h3>
+          </div>
+          <ul class="award-list">
+            <li><span class="award-name">软考中级 · 软件设计师</span><span class="award-meta">职业资格 · 已通过</span></li>
+            <li><span class="award-name">大学英语四级（CET-4）</span><span class="award-meta">已通过</span></li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= 7. 联系方式 ========================= -->
+  <section class="section section--alt" id="contact" aria-labelledby="contact-title">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">联系方式</p>
+        <h2 class="section-title" id="contact-title">欢迎和我聊聊研究、项目与合作</h2>
+        <p class="section-desc">
+          邮件我通常一天内回复。如果是课程或项目合作，建议在邮件里直接说明背景和期望的时间节点，
+          沟通效率会高很多。
+        </p>
+      </div>
+
+      <div class="contact-inner">
+
+        <!-- 左侧：邮箱（首页只公开邮箱） -->
+        <div class="reveal">
+          <div class="card contact-card">
+            <span class="contact-ico" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="3"/><path d="M3 7l9 6 9-6"/>
+              </svg>
+            </span>
+            <p class="contact-card-label">邮箱</p>
+            <a class="contact-mail" href="zhangjinluan2026@mails.szu.edu.cn">zhangjinluan2026@mails.szu.edu.cn</a>
+            <p class="contact-card-note">点击邮箱可以直接写邮件给我。</p>
+            <p class="contact-card-note contact-card-note--muted">
+              深圳大学 计算机与软件学院<br />
+              未来媒体技术与计算研究所
+            </p>
+          </div>
+        </div>
+
+        <!-- 右侧：前端校验演示表单 -->
+        <div class="card form-card reveal">
+          <form id="contact-form" novalidate>
+            <div class="form-row">
+              <label for="f-name">你的名字<span class="req" aria-hidden="true">*</span></label>
+              <input class="input" id="f-name" name="name" type="text" autocomplete="name"
+                     placeholder="例如：王同学" aria-describedby="err-name" />
+              <p class="field-error" id="err-name" role="alert"></p>
+            </div>
+
+            <div class="form-row">
+              <label for="f-email">邮箱<span class="req" aria-hidden="true">*</span></label>
+              <input class="input" id="f-email" name="email" type="email" autocomplete="email"
+                     placeholder="name@example.com" aria-describedby="err-email" />
+              <p class="field-error" id="err-email" role="alert"></p>
+            </div>
+
+            <div class="form-row">
+              <label for="f-message">想说的话<span class="req" aria-hidden="true">*</span></label>
+              <textarea class="textarea" id="f-message" name="message"
+                        placeholder="简单说明来意，比如课程合作、项目交流、学术讨论……"
+                        aria-describedby="err-message"></textarea>
+              <p class="field-error" id="err-message" role="alert"></p>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn btn-primary" type="submit">发送留言</button>
+              <span class="form-hint">此表单为前端演示，不会真的发送出去。</span>
+            </div>
+
+            <!-- 提交结果提示（读屏可播报） -->
+            <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ========================= 8. 页脚 ========================= -->
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>© <span id="year">2026</span> 张金銮 · 本页面为课程作业，使用 HTML / CSS / 原生 JavaScript 完成</p>
+    <nav class="footer-links" aria-label="页脚导航">
+      <a href="#about">关于我</a>
+      <a href="#education">就读经历</a>
+      <a href="#works">作品</a>
+      <a href="#awards">获奖</a>
+      <a href="#contact">联系</a>
+      <a href="#hero">回到顶部</a>
+    </nav>
+  </div>
+</footer>
+
+<!-- 回到顶部悬浮按钮 -->
+<button class="to-top" id="to-top" type="button" aria-label="回到页面顶部">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M12 19V5M6 11l6-6 6 6"/>
+  </svg>
+</button>
+
+<!-- 未启用 JS 时，保证内容依然可见 -->
+<noscript>
+  <style>.reveal { opacity: 1; transform: none; }</style>
+</noscript>
+
+<script>
+/* =====================================================================
+   交互脚本（原生 JavaScript，无依赖）
+   包含：移动端菜单 / 平滑滚动 / 导航高亮 / 进入视口淡入 / 回到顶部 / 表单校验
+   ===================================================================== */
+(function () {
+  'use strict';
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var header    = document.getElementById('site-header');
+  var navToggle = document.getElementById('nav-toggle');
+  var navMenu   = document.getElementById('nav-menu');
+  var toTop     = document.getElementById('to-top');
+  var navLinks  = Array.prototype.slice.call(navMenu.querySelectorAll('.nav-link'));
+  var sections  = Array.prototype.slice.call(document.querySelectorAll('main section[id]'));
+
+  /* ---------- 0. 页脚年份自动更新 ---------- */
+  var yearEl = document.getElementById('year');
+  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
+  /* ---------- 1. 移动端汉堡菜单 ---------- */
+  function closeMenu() {
+    navMenu.classList.remove('is-open');
+    navToggle.classList.remove('is-open');
+    navToggle.setAttribute('aria-expanded', 'false');
+    navToggle.setAttribute('aria-label', '打开导航菜单');
+  }
+  navToggle.addEventListener('click', function () {
+    var open = navMenu.classList.toggle('is-open');
+    navToggle.classList.toggle('is-open', open);
+    navToggle.setAttribute('aria-expanded', String(open));
+    navToggle.setAttribute('aria-label', open ? '关闭导航菜单' : '打开导航菜单');
+  });
+
+  // 点击菜单里的链接后自动收起
+  navLinks.forEach(function (link) { link.addEventListener('click', closeMenu); });
+
+  // 点击导航外部区域收起
+  document.addEventListener('click', function (e) {
+    if (!navMenu.classList.contains('is-open')) return;
+    if (header.contains(e.target)) return;
+    closeMenu();
+  });
+
+  // 按 Esc 收起
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' || e.key === 'Esc') closeMenu();
+  });
+
+  /* ---------- 2. 所有页内锚点：平滑滚动 + 焦点跟随 ---------- */
+  Array.prototype.slice.call(document.querySelectorAll('a[href^="#"]')).forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      var hash = link.getAttribute('href');
+      if (!hash || hash === '#') return;
+
+      var target = document.querySelector(hash);
+      if (!target) return;
+
+      e.preventDefault();
+
+      // 减去吸顶导航的高度，避免标题被盖住
+      var offset = header.offsetHeight + 12;
+      var top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+
+      window.scrollTo({ top: top, behavior: reduceMotion ? 'auto' : 'smooth' });
+
+      // 更新地址栏但不新增历史记录
+      if (history.replaceState) history.replaceState(null, '', hash);
+
+      // 让键盘 / 读屏焦点跟着跳过去
+      target.setAttribute('tabindex', '-1');
+      target.focus({ preventScroll: true });
+    });
+  });
+
+  /* ---------- 3. 滚动时高亮当前导航项 ---------- */
+  function updateActiveNav() {
+    if (!sections.length) return;
+
+    var probe = window.pageYOffset + header.offsetHeight + 90;
+    var currentId = sections[0].id;
+
+    sections.forEach(function (sec) {
+      if (sec.offsetTop <= probe) currentId = sec.id;
+    });
+
+    // 已经滚到底部时，强制高亮最后一项
+    var atBottom = window.innerHeight + window.pageYOffset >= document.body.scrollHeight - 4;
+    if (atBottom) currentId = sections[sections.length - 1].id;
+
+    navLinks.forEach(function (link) {
+      var on = link.getAttribute('href') === '#' + currentId;
+      link.classList.toggle('is-active', on);
+      if (on) link.setAttribute('aria-current', 'true');
+      else link.removeAttribute('aria-current');
+    });
+  }
+
+  /* ---------- 4. 回到顶部按钮的显示与点击 ---------- */
+  function updateToTop() {
+    toTop.classList.toggle('is-visible', window.pageYOffset > 480);
+  }
+  toTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  });
+
+  /* ---------- 5. 滚动监听 ----------
+     这里直接调用而不是用 requestAnimationFrame 节流：
+     整段逻辑只读取 5 个区块的位置，开销极小，
+     但能保证在 rAF 被节流的环境（后台标签页、部分无障碍/省电模式）下状态依然即时正确。
+     注意顺序是「先全部读取，再写 class」，避免反复触发强制重排。 */
+  function onScroll() {
+    updateActiveNav();
+    updateToTop();
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', function () {
+    updateActiveNav();
+    if (window.innerWidth > 768) closeMenu();  // 回到桌面宽度时收起移动菜单
+  }, { passive: true });
+
+  /* ---------- 6. 区块进入视口时淡入上移 ---------- */
+  var revealEls = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    // 不支持或用户要求减少动效：直接全部显示
+    revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+  } else {
+    var revealObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        revealObserver.unobserve(entry.target); // 只播一次
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
+
+    revealEls.forEach(function (el) { revealObserver.observe(el); });
+  }
+
+  /* ---------- 7. 联系表单：纯前端校验 ---------- */
+  var form = document.getElementById('contact-form');
+  if (form) {
+    var nameEl  = form.elements.namedItem('name');
+    var emailEl = form.elements.namedItem('email');
+    var msgEl   = form.elements.namedItem('message');
+    var statusEl = document.getElementById('form-status');
+    var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    // 写入或清除某个字段的错误提示
+    function setError(el, message) {
+      var errEl = document.getElementById('err-' + el.name);
+      if (!errEl) return !message;
+
+      if (message) {
+        el.setAttribute('aria-invalid', 'true');
+        errEl.textContent = message;
+        errEl.classList.add('is-show');
+        return false;
+      }
+      el.removeAttribute('aria-invalid');
+      errEl.textContent = '';
+      errEl.classList.remove('is-show');
+      return true;
+    }
+
+    // 单字段校验
+    function validateField(el) {
+      if (el === nameEl) {
+        return setError(el, el.value.trim() ? '' : '请填写你的名字或昵称');
+      }
+      if (el === emailEl) {
+        var v = el.value.trim();
+        if (!v) return setError(el, '请填写邮箱地址');
+        return setError(el, EMAIL_RE.test(v) ? '' : '邮箱格式看起来不太对，请检查一下');
+      }
+      if (el === msgEl) {
+        return setError(el, el.value.trim().length >= 5 ? '' : '留言至少写 5 个字，方便我了解来意');
+      }
+      return true;
+    }
+
+    // 失焦时校验；已出错的字段在输入时实时复检
+    [nameEl, emailEl, msgEl].forEach(function (el) {
+      el.addEventListener('blur', function () {
+        if (el.value.trim() !== '' || el.getAttribute('aria-invalid') === 'true') validateField(el);
+      });
+      el.addEventListener('input', function () {
+        if (el.getAttribute('aria-invalid') === 'true') validateField(el);
+      });
+    });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault(); // 演示用：不真实发送
+
+      var ok = true;
+      [nameEl, emailEl, msgEl].forEach(function (el) {
+        if (!validateField(el)) ok = false;
+      });
+
+      if (!ok) {
+        statusEl.textContent = '还有几处需要修改，请检查标红的输入框。';
+        statusEl.className = 'form-status is-error';
+        var firstBad = form.querySelector('[aria-invalid="true"]');
+        if (firstBad) firstBad.focus();
+        return;
+      }
+
+      statusEl.textContent = '提交成功！这是前端演示表单，内容没有真的发送出去（接后端时在这里调用接口即可）。';
+      statusEl.className = 'form-status is-ok';
+      form.reset();
+      [nameEl, emailEl, msgEl].forEach(function (el) { setError(el, ''); });
+    });
+  }
+
+  /* ---------- 初始化 ---------- */
+  updateActiveNav();
+  updateToTop();
+})();
+</script>
+</body>
+</html>
