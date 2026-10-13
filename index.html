@@ -399,7 +399,7 @@ a:hover { color: var(--color-primary-dark); }
 }
 
 /* =====================================================================
-   7. 就读经历（时间轴）
+   7. 求学经历（时间轴）
    ===================================================================== */
 .edu-timeline {
   position: relative;
@@ -566,10 +566,14 @@ a:hover { color: var(--color-primary-dark); }
 .work-card { display: flex; flex-direction: column; overflow: hidden; }
 .work-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: #D8E2FF; }
 .work-thumb {
+  position: relative;
   aspect-ratio: 16 / 10;
-  background: var(--color-primary-soft);
+  background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
+  overflow: hidden;
 }
+/* 缩略图：真实项目截图 / 示意图，统一按 16:10 框内等比完整显示（不裁切文字） */
+.work-thumb img { width: 100%; height: 100%; object-fit: contain; }
 .work-thumb svg { width: 100%; height: 100%; }
 .work-body { padding: 22px; display: flex; flex-direction: column; flex: 1; }
 .work-meta {
@@ -955,6 +959,149 @@ a:hover { color: var(--color-primary-dark); }
   }
   .reveal { opacity: 1; transform: none; }
 }
+
+/* =====================================================================
+   16. 项目图片灯箱（点击缩略图查看大图）
+   ===================================================================== */
+/* 缩略图整块做成按钮，鼠标呈现「可放大」手势 */
+.thumb-btn {
+  position: absolute;   /* 相对 .work-thumb 铺满，不依赖百分比高度层层传递 */
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+  overflow: hidden;
+}
+
+/* 「点击看大图」提示条：悬停 / 键盘聚焦时浮出 */
+.thumb-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  background: rgba(17, 24, 39, .74);
+  color: #FFFFFF;
+  font-size: 12.5px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, 4px);
+  transition: opacity .2s ease, transform .2s ease;
+  pointer-events: none;
+}
+/* 选择器比上面的 .work-thumb svg 更具体，确保放大镜图标是 15px 而不是被撑满 */
+.thumb-btn .thumb-hint svg { width: 15px; height: 15px; flex: none; }
+.thumb-btn:hover .thumb-hint,
+.thumb-btn:focus-visible .thumb-hint { opacity: 1; transform: translate(-50%, 0); }
+/* 触屏设备没有 hover，提示条就常显，否则用户不知道能点 */
+@media (hover: none) {
+  .thumb-hint { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ---------- 灯箱遮罩 ---------- */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;               /* 高于导航(50)、回到顶部(60)、跳转链接(100) */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 28px 20px 18px;
+  background: rgba(15, 23, 42, .86);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  visibility: hidden;
+  /* 与移动端菜单同一套做法：收起时等淡出结束再隐藏，不依赖离散属性插值 */
+  transition: opacity .22s ease, visibility 0s linear .22s;
+}
+.lightbox.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity .22s ease, visibility 0s linear 0s;
+}
+
+/* 图片舞台：图片按屏幕大小完整显示（不再有二级放大），点图片即关闭 */
+.lightbox-stage {
+  position: relative;
+  max-width: 100%;
+  max-height: calc(100vh - 150px);
+  max-height: calc(100dvh - 150px);
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--color-surface);
+  box-shadow: 0 26px 70px rgba(0, 0, 0, .5);
+}
+.lightbox-img {
+  display: block;
+  margin: 0 auto;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(100vh - 150px);
+  max-height: calc(100dvh - 150px);
+  cursor: zoom-out;
+}
+
+.lightbox-caption {
+  margin: 0;
+  color: rgba(255, 255, 255, .92);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+}
+.lightbox-tip {
+  margin: 0;
+  color: rgba(255, 255, 255, .55);
+  font-size: 12.5px;
+  text-align: center;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, .28);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .12);
+  color: #FFFFFF;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .2s ease, border-color .2s ease;
+}
+.lightbox-close:hover { background: rgba(255, 255, 255, .24); border-color: rgba(255, 255, 255, .55); }
+.lightbox-close:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 2px; }
+
+/* 灯箱打开时锁住页面滚动（脚本会补上滚动条宽度，避免页面横向跳动） */
+body.is-locked { overflow: hidden; }
+
+@media (max-width: 768px) {
+  .lightbox { padding: 62px 12px 14px; gap: 8px; }
+  .lightbox-stage,
+  .lightbox-img {
+    max-height: calc(100vh - 168px);
+    max-height: calc(100dvh - 168px);
+  }
+  .lightbox-close { top: 10px; right: 10px; width: 38px; height: 38px; font-size: 20px; }
+  .lightbox-tip { font-size: 12px; }
+}
 </style>
 </head>
 
@@ -970,6 +1117,22 @@ a:hover { color: var(--color-primary-dark); }
       <span class="brand-text">张金銮</span>
     </a>
 
+    <!-- 注意：<nav> 必须排在汉堡按钮之前。
+         移动端 .nav-menu 是绝对定位、脱离文档流，<nav> 外壳本身没有内容、宽度为 0，
+         但它仍是一个 flex 子项。若排在按钮之后，这个零宽空盒会占住最右一格，
+         space-between 会把汉堡按钮挤到中间，看起来就不贴右边了。 -->
+    <nav aria-label="主导航">
+      <ul class="nav-menu" id="nav-menu">
+        <li><a class="nav-link" href="#hero">首页</a></li>
+        <li><a class="nav-link" href="#about">关于我</a></li>
+        <li><a class="nav-link" href="#education">求学经历</a></li>
+        <li><a class="nav-link" href="#skills">技能</a></li>
+        <li><a class="nav-link" href="#works">项目</a></li>
+        <li><a class="nav-link" href="#awards">获奖</a></li>
+        <li><a class="nav-link" href="#contact">联系方式</a></li>
+      </ul>
+    </nav>
+
     <!-- 移动端汉堡按钮 -->
     <button
       class="nav-toggle"
@@ -982,18 +1145,6 @@ a:hover { color: var(--color-primary-dark); }
       <span class="nav-toggle-bar" aria-hidden="true"></span>
       <span class="nav-toggle-bar" aria-hidden="true"></span>
     </button>
-
-    <nav aria-label="主导航">
-      <ul class="nav-menu" id="nav-menu">
-        <li><a class="nav-link" href="#hero">首页</a></li>
-        <li><a class="nav-link" href="#about">关于我</a></li>
-        <li><a class="nav-link" href="#education">就读经历</a></li>
-        <li><a class="nav-link" href="#skills">技能</a></li>
-        <li><a class="nav-link" href="#works">项目</a></li>
-        <li><a class="nav-link" href="#awards">获奖</a></li>
-        <li><a class="nav-link" href="#contact">联系方式</a></li>
-      </ul>
-    </nav>
   </div>
 </header>
 
@@ -1103,11 +1254,11 @@ a:hover { color: var(--color-primary-dark); }
     </div>
   </section>
 
-  <!-- ========================= 3. 就读经历 ========================= -->
+  <!-- ========================= 3. 求学经历 ========================= -->
   <section class="section section--alt" id="education" aria-labelledby="education-title">
     <div class="wrap">
       <div class="section-head reveal">
-        <p class="eyebrow">就读经历</p>
+        <p class="eyebrow">求学经历</p>
         <h2 class="section-title" id="education-title">从湖南工学院到深圳大学</h2>
         <p class="section-desc">
           本科打基础，研究生转向多模态大模型与智能体方向——两个阶段各做了一件事，也各留下了一些东西。
@@ -1297,56 +1448,22 @@ a:hover { color: var(--color-primary-dark); }
 
         <!-- 项目 1：研究生阶段当前方向，排在最前 -->
         <article class="card work-card reveal">
+          <!-- 项目示意图（图片文件放在 assets/ 目录下，换图只需改 src）
+               整块做成按钮：点击打开灯箱看大图，逻辑见脚本第 8 节 -->
           <div class="work-thumb">
-            <svg viewBox="0 0 320 200" role="img" aria-label="项目示意图：学术论文经多模态模型转化为内容精炼、布局规整的学术海报">
-              <rect width="320" height="200" fill="#EEF3FF"/>
-              <!-- 左：输入的学术论文 -->
-              <rect x="22" y="30" width="118" height="140" rx="8" fill="#FFFFFF" stroke="#D8E2FF"/>
-              <rect x="34" y="41" width="72" height="7" rx="3.5" fill="#4F7CFF"/>
-              <rect x="34" y="52" width="46" height="4" rx="2" fill="#D8E2FF"/>
-              <!-- 双栏正文 -->
-              <rect x="34" y="66" width="42" height="4" rx="2" fill="#E5EAF5"/>
-              <rect x="34" y="75" width="42" height="4" rx="2" fill="#E5EAF5"/>
-              <rect x="34" y="84" width="34" height="4" rx="2" fill="#E5EAF5"/>
-              <rect x="34" y="93" width="42" height="4" rx="2" fill="#E5EAF5"/>
-              <rect x="34" y="102" width="28" height="4" rx="2" fill="#E5EAF5"/>
-              <rect x="80" y="66" width="42" height="4" rx="2" fill="#E5EAF5"/>
-              <rect x="80" y="75" width="42" height="4" rx="2" fill="#E5EAF5"/>
-              <rect x="80" y="84" width="30" height="4" rx="2" fill="#E5EAF5"/>
-              <rect x="80" y="93" width="42" height="4" rx="2" fill="#E5EAF5"/>
-              <rect x="80" y="102" width="38" height="4" rx="2" fill="#E5EAF5"/>
-              <!-- 论文中的表格 -->
-              <rect x="34" y="118" width="88" height="38" rx="3" fill="none" stroke="#D8E2FF"/>
-              <path d="M34 130h88M34 142h88M63 118v38M92 118v38" stroke="#D8E2FF"/>
-              <!-- 中：转换箭头 -->
-              <path d="M148 100h28" stroke="#9DB4E8" stroke-width="3" stroke-linecap="round"/>
-              <path d="M169 93l8 7-8 7" fill="none" stroke="#9DB4E8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-              <text x="162" y="84" font-size="10" font-family="sans-serif" font-weight="600" fill="#9DB4E8" text-anchor="middle">MLLM</text>
-              <!-- 右：生成的学术海报 -->
-              <rect x="186" y="30" width="112" height="140" rx="8" fill="#FFFFFF" stroke="#D8E2FF"/>
-              <path d="M186 38a8 8 0 0 1 8-8h96a8 8 0 0 1 8 8v18H186z" fill="#4F7CFF"/>
-              <rect x="197" y="40" width="46" height="6" rx="3" fill="#FFFFFF" opacity=".92"/>
-              <rect x="197" y="50" width="30" height="4" rx="2" fill="#FFFFFF" opacity=".6"/>
-              <!-- 主图 -->
-              <rect x="197" y="68" width="90" height="26" rx="4" fill="#EEF3FF" stroke="#D8E2FF"/>
-              <circle cx="212" cy="78" r="3" fill="#C7D7FF"/>
-              <path d="M202 90l10-8 8 6 7-5 9 7z" fill="#C7D7FF"/>
-              <!-- 两栏要点 -->
-              <rect x="197" y="102" width="42" height="4" rx="2" fill="#9DB4E8"/>
-              <rect x="197" y="112" width="42" height="4" rx="2" fill="#E5EAF5"/>
-              <rect x="197" y="122" width="34" height="4" rx="2" fill="#E5EAF5"/>
-              <rect x="197" y="132" width="42" height="4" rx="2" fill="#E5EAF5"/>
-              <rect x="245" y="102" width="42" height="4" rx="2" fill="#9DB4E8"/>
-              <rect x="245" y="112" width="42" height="4" rx="2" fill="#E5EAF5"/>
-              <rect x="245" y="122" width="28" height="4" rx="2" fill="#E5EAF5"/>
-              <rect x="245" y="132" width="42" height="4" rx="2" fill="#E5EAF5"/>
-              <!-- 底部结果图 -->
-              <rect x="197" y="144" width="90" height="16" rx="4" fill="#F8FAFC" stroke="#E5EAF5"/>
-              <rect x="204" y="150" width="10" height="5" rx="2" fill="#C7D7FF"/>
-              <rect x="218" y="150" width="10" height="5" rx="2" fill="#9DB4E8"/>
-              <rect x="232" y="150" width="10" height="5" rx="2" fill="#4F7CFF"/>
-              <rect x="246" y="150" width="10" height="5" rx="2" fill="#C7D7FF"/>
-            </svg>
+            <button class="thumb-btn" type="button" aria-label="查看大图：Paper2Poster 论文转学术海报示意图">
+              <img src="./assets/project_1.png"
+                   width="3200" height="2000"
+                   loading="lazy" decoding="async"
+                   alt="Paper2Poster 项目示意图：论文解析与多模态内容理解、内容筛选与 Agent 版式规划、海报生成渲染与交互修改三大模块" />
+              <span class="thumb-hint" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                  <circle cx="11" cy="11" r="7"/>
+                  <path d="M20.5 20.5L16.5 16.5"/>
+                </svg>
+                点击看大图
+              </span>
+            </button>
           </div>
           <div class="work-body">
             <p class="work-meta">在研工作 · 2026.09 – 至今</p>
@@ -1376,35 +1493,22 @@ a:hover { color: var(--color-primary-dark); }
 
         <!-- 项目 2 -->
         <article class="card work-card reveal">
+          <!-- 项目截图（图片文件放在 assets/ 目录下，换图只需改 src）
+               整块做成按钮：点击打开灯箱看大图，逻辑见脚本第 8 节 -->
           <div class="work-thumb">
-            <svg viewBox="0 0 320 200" role="img" aria-label="作品示意图：工厂管理系统的数据看板界面">
-              <rect width="320" height="200" fill="#EEF3FF"/>
-              <rect x="30" y="26" width="260" height="148" rx="10" fill="#FFFFFF" stroke="#D8E2FF"/>
-              <!-- 左侧菜单 -->
-              <path d="M40 26h44v148H40a10 10 0 0 1-10-10V36a10 10 0 0 1 10-10z" fill="#4F7CFF"/>
-              <rect x="44" y="46" width="26" height="6" rx="3" fill="#FFFFFF" opacity=".9"/>
-              <rect x="44" y="64" width="26" height="6" rx="3" fill="#FFFFFF" opacity=".5"/>
-              <rect x="44" y="82" width="26" height="6" rx="3" fill="#FFFFFF" opacity=".5"/>
-              <rect x="44" y="100" width="26" height="6" rx="3" fill="#FFFFFF" opacity=".5"/>
-              <!-- 顶部指标卡 -->
-              <rect x="98" y="44" width="54" height="34" rx="7" fill="#EEF3FF"/>
-              <rect x="160" y="44" width="54" height="34" rx="7" fill="#EEF3FF"/>
-              <rect x="222" y="44" width="54" height="34" rx="7" fill="#EEF3FF"/>
-              <rect x="108" y="54" width="22" height="6" rx="3" fill="#9DB4E8"/>
-              <rect x="170" y="54" width="22" height="6" rx="3" fill="#9DB4E8"/>
-              <rect x="232" y="54" width="22" height="6" rx="3" fill="#9DB4E8"/>
-              <rect x="108" y="66" width="34" height="5" rx="2.5" fill="#D8E2FF"/>
-              <rect x="170" y="66" width="34" height="5" rx="2.5" fill="#D8E2FF"/>
-              <rect x="232" y="66" width="34" height="5" rx="2.5" fill="#D8E2FF"/>
-              <!-- 统计图 -->
-              <rect x="98" y="92" width="178" height="66" rx="8" fill="#F8FAFC" stroke="#E5EAF5"/>
-              <rect x="112" y="126" width="18" height="24" rx="4" fill="#C7D7FF"/>
-              <rect x="140" y="112" width="18" height="38" rx="4" fill="#9DB4E8"/>
-              <rect x="168" y="102" width="18" height="48" rx="4" fill="#4F7CFF"/>
-              <rect x="196" y="118" width="18" height="32" rx="4" fill="#C7D7FF"/>
-              <rect x="224" y="106" width="18" height="44" rx="4" fill="#9DB4E8"/>
-              <path d="M108 146h160" stroke="#D8E2FF" stroke-width="2"/>
-            </svg>
+            <button class="thumb-btn" type="button" aria-label="查看大图：慧厂管家项目示意图">
+              <img src="./assets/project_2.png"
+                   width="4800" height="3000"
+                   loading="lazy" decoding="async"
+                   alt="慧厂管家项目示意图：顶部为项目标题，下方含系统设计（体系结构、功能模块、数据库设计）、系统实现（技术选型、核心功能、数据可视化）与系统测试（功能、性能、安全）三部分" />
+              <span class="thumb-hint" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                  <circle cx="11" cy="11" r="7"/>
+                  <path d="M20.5 20.5L16.5 16.5"/>
+                </svg>
+                点击看大图
+              </span>
+            </button>
           </div>
           <div class="work-body">
             <p class="work-meta">工程项目 · 2025.01 – 2025.04</p>
@@ -1434,26 +1538,22 @@ a:hover { color: var(--color-primary-dark); }
 
         <!-- 项目 3 -->
         <article class="card work-card reveal">
+          <!-- 项目截图（图片文件放在 assets/ 目录下，换图只需改 src）
+               整块做成按钮：点击打开灯箱看大图，逻辑见脚本第 8 节 -->
           <div class="work-thumb">
-            <svg viewBox="0 0 320 200" role="img" aria-label="作品示意图：高校竞赛平台的主界面与实时消息推送">
-              <rect width="320" height="200" fill="#EEF3FF"/>
-              <!-- 主面板 -->
-              <rect x="26" y="30" width="180" height="140" rx="10" fill="#FFFFFF" stroke="#D8E2FF"/>
-              <rect x="42" y="46" width="70" height="9" rx="4.5" fill="#C7D7FF"/>
-              <rect x="42" y="68" width="148" height="30" rx="7" fill="#EEF3FF"/>
-              <rect x="42" y="106" width="148" height="30" rx="7" fill="#EEF3FF"/>
-              <rect x="56" y="80" width="60" height="6" rx="3" fill="#9DB4E8"/>
-              <rect x="56" y="118" width="76" height="6" rx="3" fill="#9DB4E8"/>
-              <!-- 消息推送卡 -->
-              <rect x="216" y="52" width="78" height="52" rx="10" fill="#4F7CFF"/>
-              <rect x="228" y="68" width="42" height="6" rx="3" fill="#FFFFFF" opacity=".9"/>
-              <rect x="228" y="82" width="54" height="6" rx="3" fill="#FFFFFF" opacity=".6"/>
-              <!-- 消息气泡 -->
-              <rect x="216" y="116" width="78" height="34" rx="10" fill="#FFFFFF" stroke="#D8E2FF"/>
-              <circle cx="233" cy="133" r="7" fill="#C7D7FF"/>
-              <rect x="247" y="127" width="36" height="5" rx="2.5" fill="#E5EAF5"/>
-              <rect x="247" y="137" width="24" height="5" rx="2.5" fill="#E5EAF5"/>
-            </svg>
+            <button class="thumb-btn" type="button" aria-label="查看大图：智赛方舟项目示意图">
+              <img src="./assets/project_3.png"
+                   width="3240" height="2020"
+                   loading="lazy" decoding="async"
+                   alt="智赛方舟项目示意图：基于 SpringBoot + Vue 的高校竞赛平台总体功能框架，含学生端、教师端、获奖审核员端与平台公共支撑" />
+              <span class="thumb-hint" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+                  <circle cx="11" cy="11" r="7"/>
+                  <path d="M20.5 20.5L16.5 16.5"/>
+                </svg>
+                点击看大图
+              </span>
+            </button>
           </div>
           <div class="work-body">
             <p class="work-meta">毕业设计 · 2026.01 – 2026.03</p>
@@ -1648,7 +1748,7 @@ a:hover { color: var(--color-primary-dark); }
     <p>© <span id="year">2026</span> 张金銮 · 本页面为课程作业，使用 HTML / CSS / 原生 JavaScript 完成</p>
     <nav class="footer-links" aria-label="页脚导航">
       <a href="#about">关于我</a>
-      <a href="#education">就读经历</a>
+      <a href="#education">求学经历</a>
       <a href="#works">作品</a>
       <a href="#awards">获奖</a>
       <a href="#contact">联系</a>
@@ -1663,6 +1763,19 @@ a:hover { color: var(--color-primary-dark); }
     <path d="M12 19V5M6 11l6-6 6 6"/>
   </svg>
 </button>
+
+<!-- ========================= 项目图片灯箱（点击缩略图打开） ========================= -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="项目图片预览">
+  <button class="lightbox-close" type="button" aria-label="关闭预览">&times;</button>
+
+  <!-- 注意：img 初始不写 src（写成空串会去请求当前页面本身），由脚本在打开时填入 -->
+  <div class="lightbox-stage" id="lightbox-stage">
+    <img class="lightbox-img" id="lightbox-img" alt="" />
+  </div>
+
+  <p class="lightbox-caption" id="lightbox-caption" hidden></p>
+  <p class="lightbox-tip">点击图片即可关闭 · 按 Esc 或点空白处也可关闭</p>
+</div>
 
 <!-- 未启用 JS 时，保证内容依然可见 -->
 <noscript>
@@ -1881,6 +1994,86 @@ a:hover { color: var(--color-primary-dark); }
       statusEl.className = 'form-status is-ok';
       form.reset();
       [nameEl, emailEl, msgEl].forEach(function (el) { setError(el, ''); });
+    });
+  }
+
+  /* ---------- 8. 项目图片灯箱：点击缩略图看大图 ---------- */
+  var lightbox = document.getElementById('lightbox');
+  if (lightbox) {
+    var lbImg     = document.getElementById('lightbox-img');
+    var lbStage   = document.getElementById('lightbox-stage');
+    var lbCaption = document.getElementById('lightbox-caption');
+    var lbClose   = lightbox.querySelector('.lightbox-close');
+    var lastFocus = null;      // 记住触发元素，关闭后把焦点还回去
+
+    // 锁滚动时补上滚动条宽度，防止整页横向跳动
+    function lockScroll(on) {
+      var gap = window.innerWidth - document.documentElement.clientWidth;
+      // 钳一下：无滚动条时 gap 为 0，个别环境读不到布局值时会得到离谱的数字
+      if (!(gap > 0 && gap < 40)) gap = 0;
+      document.body.style.paddingRight = (on && gap) ? gap + 'px' : '';
+      document.body.classList.toggle('is-locked', on);
+    }
+
+    function openLightbox(btn) {
+      var img = btn.querySelector('img');
+      if (!img) return;
+
+      // 标题直接取同卡片里的 <h3>，不用另外维护一份文案
+      var card = btn.closest ? btn.closest('.work-card') : null;
+      var title = card ? card.querySelector('h3') : null;
+      var text = title ? title.textContent.trim() : '';
+
+      lbImg.setAttribute('src', img.getAttribute('src') || '');
+      lbImg.setAttribute('alt', img.getAttribute('alt') || '');
+      lbCaption.textContent = text;
+      lbCaption.hidden = !text;
+
+      lastFocus = btn;
+      lbStage.scrollTop = 0;
+      lbStage.scrollLeft = 0;
+      lightbox.classList.add('is-open');
+      lockScroll(true);
+      lbClose.focus();
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('is-open');
+      lockScroll(false);
+
+      // 等淡出动画结束再卸掉图片，既避免闪白也及时释放内存
+      window.setTimeout(function () {
+        if (!lightbox.classList.contains('is-open')) lbImg.removeAttribute('src');
+      }, reduceMotion ? 0 : 260);
+
+      if (lastFocus) lastFocus.focus();
+    }
+
+    Array.prototype.slice.call(document.querySelectorAll('.thumb-btn')).forEach(function (btn) {
+      btn.addEventListener('click', function () { openLightbox(btn); });
+    });
+
+    lbClose.addEventListener('click', closeLightbox);
+
+    // 点图片本体（含图片周围的留白）：直接关闭，不做任何放大
+    lbStage.addEventListener('click', closeLightbox);
+
+    // 点遮罩空白处关闭
+    lightbox.addEventListener('click', function (e) {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (!lightbox.classList.contains('is-open')) return;
+      if (e.key === 'Escape' || e.key === 'Esc') {
+        closeLightbox();
+        return;
+      }
+      // 焦点圈在弹层内，避免 Tab 跑到背后的页面上
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        lbClose.focus();
+      }
     });
   }
 
